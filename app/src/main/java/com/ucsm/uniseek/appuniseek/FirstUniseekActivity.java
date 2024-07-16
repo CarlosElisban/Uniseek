@@ -16,6 +16,8 @@ import android.media.ThumbnailUtils;
 
 import com.ucsm.uniseek.R;
 import com.ucsm.uniseek.ml.ModelColor;
+import com.ucsm.uniseek.ml.ModelColoresv2;
+import com.ucsm.uniseek.ml.ModelObjetosv2;
 import com.ucsm.uniseek.ml.ModelUnquant;
 
 import org.tensorflow.lite.DataType;
@@ -58,8 +60,8 @@ public class FirstUniseekActivity extends AppCompatActivity {
 
     public void classifyImage(Bitmap image){
         try {
-            ModelUnquant model = ModelUnquant.newInstance(getApplicationContext());
-            ModelColor model2 = ModelColor.newInstance(getApplicationContext());
+            ModelObjetosv2 model = ModelObjetosv2.newInstance(getApplicationContext());
+            ModelColoresv2 model2 = ModelColoresv2.newInstance(getApplicationContext());
 
             // Creates inputs for reference.
             TensorBuffer inputFeature0 = TensorBuffer.createFixedSize(new int[]{1, 224, 224, 3}, DataType.FLOAT32);
@@ -80,13 +82,16 @@ public class FirstUniseekActivity extends AppCompatActivity {
             inputFeature0.loadBuffer(byteBuffer);
 
             // Runs model inference and gets result.
-            ModelUnquant.Outputs outputs = model.process(inputFeature0);
-            ModelColor.Outputs outputs2 = model2.process(inputFeature0);
+
+            ModelObjetosv2.Outputs outputs = model.process(inputFeature0);
+            ModelColoresv2.Outputs outputs2 = model2.process(inputFeature0);
+
 
             TensorBuffer outputFeature0 = outputs.getOutputFeature0AsTensorBuffer();
             TensorBuffer outputFeature02 = outputs2.getOutputFeature0AsTensorBuffer();
 
 
+            //Objetos
             float[] confidences = outputFeature0.getFloatArray();
             
             int maxPos = 0;
@@ -99,6 +104,7 @@ public class FirstUniseekActivity extends AppCompatActivity {
             }
             float[] confidences2 = outputFeature02.getFloatArray();
 
+            //Colores
             int maxPos2 = 0;
             float maxConfidence2 = 0;
             for (int i = 0; i < confidences2.length; i++ ){
@@ -108,18 +114,20 @@ public class FirstUniseekActivity extends AppCompatActivity {
                 }
             }
 
-            String[] classes = {"Laptop","Smartphone"};
-            String[] classes2 = {"Amarillo","Azul","Rojo"};
+            String[] classes = {"Billetera","Calculadora","Cargador","Cartuchera","Smartphone","DNI","Laptop","Libro","Mochila","Reloj","Tomatodo"};
+            String[] classes2 = {"Amarillo","Azul","Blanco","Gris","Marron","Morado","Naranja","Negro","Rojo","Verde"};
 
-            result.setText(classes[maxPos]+"color"+classes2[maxPos2]);
+            result.setText(classes[maxPos]+" color "+classes2[maxPos2]);
 
+            //Objetos
             String s = "";
             for(int i = 0; i < classes.length; i++){
                 s += String.format("%s: %.1f%%\n", classes[i], confidences[i] * 100);
             }
 
+            //Colores
             String s2 = "";
-            for(int j = 0; j < classes.length; j++){
+            for(int j = 0; j < classes2.length; j++){
                 s2 += String.format("%s: %.1f%%\n", classes2[j], confidences2[j] * 100);
             }
             confidence.setText(s+s2);

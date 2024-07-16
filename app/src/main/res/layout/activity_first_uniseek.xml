@@ -63,7 +63,7 @@
         android:layout_centerHorizontal="true"
         android:text=""
         android:textColor="#000"
-        android:textSize="22sp"
+        android:textSize="10sp"
         android:id="@+id/confidence"
         android:layout_below="@+id/confidencesText"
         />
