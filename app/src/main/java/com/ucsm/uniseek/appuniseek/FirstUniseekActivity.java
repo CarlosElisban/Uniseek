@@ -15,10 +15,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.media.ThumbnailUtils;
 
 import com.ucsm.uniseek.R;
-import com.ucsm.uniseek.ml.ModelColor;
 import com.ucsm.uniseek.ml.ModelColoresv2;
 import com.ucsm.uniseek.ml.ModelObjetosv2;
-import com.ucsm.uniseek.ml.ModelUnquant;
+
 
 import org.tensorflow.lite.DataType;
 import org.tensorflow.lite.support.tensorbuffer.TensorBuffer;
