@@ -1,8 +1,12 @@
 package com.ucsm.uniseek.appuniseek;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -33,6 +37,27 @@ public class PrincipalUniseekActivity extends AppCompatActivity {
             Intent intent = new Intent(PrincipalUniseekActivity.this, FirstUniseekActivity.class);
             startActivity(intent);
         });
+
+        EditText colorEditText = findViewById(R.id.color);
+        EditText objetoEditText = findViewById(R.id.objeto);
+        ImageView imageView = findViewById(R.id.imagephoto);
+
+        // Recibir datos del Intent
+        Intent intent = getIntent();
+        if (intent != null) {
+            String objeto = intent.getStringExtra("objeto");
+            String color = intent.getStringExtra("color");
+
+            byte[] byteArray = intent.getByteArrayExtra("imagen");
+
+            // Asignar los datos a los EditText
+            objetoEditText.setText(objeto);
+            colorEditText.setText(color);
+            if (byteArray != null) {
+                Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+                imageView.setImageBitmap(bitmap);
+            }
+        }
     }
 
 }

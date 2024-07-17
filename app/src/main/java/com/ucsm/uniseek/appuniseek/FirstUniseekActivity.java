@@ -22,6 +22,7 @@ import com.ucsm.uniseek.ml.ModelObjetosv2;
 import org.tensorflow.lite.DataType;
 import org.tensorflow.lite.support.tensorbuffer.TensorBuffer;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -116,8 +117,20 @@ public class FirstUniseekActivity extends AppCompatActivity {
             String[] classes = {"Billetera","Calculadora","Cargador","Cartuchera","Smartphone","DNI","Laptop","Libro","Mochila","Reloj","Tomatodo"};
             String[] classes2 = {"Amarillo","Azul","Blanco","Gris","Marron","Morado","Naranja","Negro","Rojo","Verde"};
 
-            result.setText(classes[maxPos]+" color "+classes2[maxPos2]);
+            //result.setText(classes[maxPos]+" color "+classes2[maxPos2]);
 
+            Intent intent = new Intent(FirstUniseekActivity.this, PrincipalUniseekActivity.class);
+            intent.putExtra("objeto", classes[maxPos]);
+            intent.putExtra("color", classes2[maxPos2]);
+
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            image.compress(Bitmap.CompressFormat.PNG, 100, stream);
+            byte[] byteArray = stream.toByteArray();
+            intent.putExtra("imagen", byteArray);
+
+            startActivity(intent);
+
+            /*
             //Objetos
             String s = "";
             for(int i = 0; i < classes.length; i++){
@@ -129,7 +142,7 @@ public class FirstUniseekActivity extends AppCompatActivity {
             for(int j = 0; j < classes2.length; j++){
                 s2 += String.format("%s: %.1f%%\n", classes2[j], confidences2[j] * 100);
             }
-            confidence.setText(s+s2);
+            confidence.setText(s+s2);*/
 
             // Releases model resources if no longer used.
             model.close();
@@ -145,6 +158,8 @@ public class FirstUniseekActivity extends AppCompatActivity {
             Bitmap image = (Bitmap) data.getExtras().get("data");
             int dimension = Math.min(image.getWidth(), image.getHeight());
             image = ThumbnailUtils.extractThumbnail(image,dimension,dimension);
+
+
             imageView.setImageBitmap(image);
 
             image = Bitmap.createScaledBitmap(image, imageSize,imageSize, false);
