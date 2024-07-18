@@ -1,12 +1,17 @@
 package com.ucsm.uniseek.appuniseek;
 
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TimePicker;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,7 +21,12 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.ucsm.uniseek.R;
 
-public class PrincipalUniseekActivity extends AppCompatActivity {
+import java.util.Calendar;
+
+public class PrincipalUniseekActivity extends AppCompatActivity implements View.OnClickListener {
+    Button bfecha,bhora;
+    EditText efecha,ehora;
+    private int dia,mes,ano,hora,minutos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +68,56 @@ public class PrincipalUniseekActivity extends AppCompatActivity {
                 imageView.setImageBitmap(bitmap);
             }
         }
+        
+        bfecha = (Button) findViewById(R.id.seleccionarFechaButton);
+        bhora = (Button) findViewById(R.id.seleccionarHoraButton);
+        efecha = (EditText) findViewById(R.id.fechaEditText);
+        ehora = (EditText) findViewById(R.id.horaEditText);
+
+        Calendar calendario = Calendar.getInstance();
+        dia = calendario.get(Calendar.DAY_OF_MONTH);
+        mes = calendario.get(Calendar.MONTH);
+        ano = calendario.get(Calendar.YEAR);
+        hora = calendario.get(Calendar.HOUR_OF_DAY);
+        minutos = calendario.get(Calendar.MINUTE);
+
+        // Establecer la fecha y hora actual en los EditText
+        efecha.setText(dia + "/" + (mes + 1) + "/" + ano);
+        ehora.setText(hora + ":" + minutos);
+        
+        bfecha.setOnClickListener(this);
+        bhora.setOnClickListener(this);
     }
 
+    @Override
+    public void onClick(View v) {
+        if(v==bfecha){
+            final Calendar c= Calendar.getInstance();
+            dia=c.get(Calendar.DAY_OF_MONTH);
+            mes=c.get(Calendar.MONTH);
+            ano=c.get(Calendar.YEAR);
+
+            DatePickerDialog datePickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
+
+                @Override
+                public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                    efecha.setText(dayOfMonth+"/"+(monthOfYear+1)+"/"+year);
+                }
+            },dia,mes,ano);
+            datePickerDialog.show();
+        }
+        if(v==bhora){
+            final Calendar c = Calendar.getInstance();
+            hora=c.get(Calendar.HOUR_OF_DAY);
+            minutos=c.get(Calendar.MINUTE);
+
+            TimePickerDialog timePickerDialog = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
+                @Override
+                public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                    ehora.setText(hourOfDay+":"+minute);
+                }
+            },hora,minutos,false);
+            timePickerDialog.show();
+        }
+    }
 }

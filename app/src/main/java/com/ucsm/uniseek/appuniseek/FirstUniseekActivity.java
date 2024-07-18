@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.Nullable;
@@ -31,16 +32,18 @@ public class FirstUniseekActivity extends AppCompatActivity {
 
     TextView result, confidence;
     ImageView imageView;
-    Button picture;
+    ImageButton picture;
     int imageSize = 224;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_first_uniseek);
+        /*
         result = findViewById(R.id.result);
         confidence = findViewById(R.id.confidence);
         imageView = findViewById(R.id.imageView);
+        */
         picture = findViewById(R.id.button);
 
         picture.setOnClickListener(new View.OnClickListener() {
@@ -160,7 +163,7 @@ public class FirstUniseekActivity extends AppCompatActivity {
             image = ThumbnailUtils.extractThumbnail(image,dimension,dimension);
 
 
-            imageView.setImageBitmap(image);
+            //imageView.setImageBitmap(image);
 
             image = Bitmap.createScaledBitmap(image, imageSize,imageSize, false);
             classifyImage(image);
