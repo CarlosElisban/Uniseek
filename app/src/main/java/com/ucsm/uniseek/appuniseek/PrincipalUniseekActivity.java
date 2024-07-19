@@ -7,10 +7,13 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TimePicker;
 
 import androidx.activity.EdgeToEdge;
@@ -21,12 +24,17 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.ucsm.uniseek.R;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 public class PrincipalUniseekActivity extends AppCompatActivity implements View.OnClickListener {
-    Button bfecha,bhora;
-    EditText efecha,ehora;
-    private int dia,mes,ano,hora,minutos;
+    Button bfecha, bhora;
+    ImageButton refreshButton;
+    EditText efecha, ehora, colorEditText, objetoEditText;
+    ImageView imageView;
+    Spinner spinner;
+    private int dia, mes, ano, hora, minutos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,41 +46,50 @@ public class PrincipalUniseekActivity extends AppCompatActivity implements View.
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        // Obtener referencia del boton de la actividad de lanzamiento
-        Button button = findViewById(R.id.button2);
 
-        // Agregar listener al botón
+        // Obtener referencia de los elementos de la UI
+        Button button = findViewById(R.id.button2);
         button.setOnClickListener(view -> {
-            // Intent para navegar a OtraActividad
             Intent intent = new Intent(PrincipalUniseekActivity.this, FirstUniseekActivity.class);
             startActivity(intent);
         });
 
-        EditText colorEditText = findViewById(R.id.color);
-        EditText objetoEditText = findViewById(R.id.objeto);
-        ImageView imageView = findViewById(R.id.imagephoto);
+        colorEditText = findViewById(R.id.color);
+        objetoEditText = findViewById(R.id.objeto);
+        imageView = findViewById(R.id.imagephoto);
+        spinner = findViewById(R.id.marca_modelo);
+
+        // Configurar botón de actualización (refresh)
+        refreshButton = findViewById(R.id.refresh);
+        refreshButton.setOnClickListener(v -> {
+            // Obtener el texto del EditText objeto
+            String objeto = objetoEditText.getText().toString().trim();
+            // Actualizar las opciones del Spinner
+            updateSpinnerOptions(objeto);
+        });
 
         // Recibir datos del Intent
         Intent intent = getIntent();
         if (intent != null) {
             String objeto = intent.getStringExtra("objeto");
             String color = intent.getStringExtra("color");
-
             byte[] byteArray = intent.getByteArrayExtra("imagen");
 
-            // Asignar los datos a los EditText
             objetoEditText.setText(objeto);
             colorEditText.setText(color);
             if (byteArray != null) {
                 Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
                 imageView.setImageBitmap(bitmap);
             }
+
+            // Actualizar opciones del Spinner según el color recibido
+            updateSpinnerOptions(objeto);
         }
-        
-        bfecha = (Button) findViewById(R.id.seleccionarFechaButton);
-        bhora = (Button) findViewById(R.id.seleccionarHoraButton);
-        efecha = (EditText) findViewById(R.id.fechaEditText);
-        ehora = (EditText) findViewById(R.id.horaEditText);
+
+        bfecha = findViewById(R.id.seleccionarFechaButton);
+        bhora = findViewById(R.id.seleccionarHoraButton);
+        efecha = findViewById(R.id.fechaEditText);
+        ehora = findViewById(R.id.horaEditText);
 
         Calendar calendario = Calendar.getInstance();
         dia = calendario.get(Calendar.DAY_OF_MONTH);
@@ -81,43 +98,164 @@ public class PrincipalUniseekActivity extends AppCompatActivity implements View.
         hora = calendario.get(Calendar.HOUR_OF_DAY);
         minutos = calendario.get(Calendar.MINUTE);
 
-        // Establecer la fecha y hora actual en los EditText
         efecha.setText(dia + "/" + (mes + 1) + "/" + ano);
         ehora.setText(hora + ":" + minutos);
-        
+
         bfecha.setOnClickListener(this);
         bhora.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
-        if(v==bfecha){
-            final Calendar c= Calendar.getInstance();
-            dia=c.get(Calendar.DAY_OF_MONTH);
-            mes=c.get(Calendar.MONTH);
-            ano=c.get(Calendar.YEAR);
+        if (v == bfecha) {
+            final Calendar c = Calendar.getInstance();
+            dia = c.get(Calendar.DAY_OF_MONTH);
+            mes = c.get(Calendar.MONTH);
+            ano = c.get(Calendar.YEAR);
 
             DatePickerDialog datePickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
-
                 @Override
                 public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                    efecha.setText(dayOfMonth+"/"+(monthOfYear+1)+"/"+year);
+                    efecha.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
                 }
-            },dia,mes,ano);
+            }, dia, mes, ano);
             datePickerDialog.show();
         }
-        if(v==bhora){
+        if (v == bhora) {
             final Calendar c = Calendar.getInstance();
-            hora=c.get(Calendar.HOUR_OF_DAY);
-            minutos=c.get(Calendar.MINUTE);
+            hora = c.get(Calendar.HOUR_OF_DAY);
+            minutos = c.get(Calendar.MINUTE);
 
             TimePickerDialog timePickerDialog = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
                 @Override
                 public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                    ehora.setText(hourOfDay+":"+minute);
+                    ehora.setText(hourOfDay + ":" + minute);
                 }
-            },hora,minutos,false);
+            }, hora, minutos, false);
             timePickerDialog.show();
         }
     }
+
+    private void updateSpinnerOptions(String objeto) {
+        List<String> options = new ArrayList<>();
+        switch (objeto.toLowerCase()) {
+            case "billetera":
+                options.add("Levi's");
+                options.add("Gucci");
+                options.add("Fossil");
+                options.add("Calvin Klein");
+                options.add("Nike");
+                options.add("Adidas");
+                options.add("Puma");
+                options.add("Vans");
+                options.add("Rip Curl");
+                options.add("No esta en la lista de opciones");
+                options.add("No especifica");
+                break;
+            case "calculadora":
+                options.add("Texas Instruments");
+                options.add("Hewlett-Packard(HP)");
+                options.add("Casio");
+                options.add("Canon");
+                options.add("Sharp");
+                options.add("No esta en la lista de opciones");
+                options.add("No especifica");
+                break;
+            case "cargador":
+                options.add("Dell-Laptop");
+                options.add("HP-Laptop");
+                options.add("Lenovo-Laptop");
+                options.add("Apple-Laptop");
+                options.add("Asus-Laptop");
+                options.add("Anker-Smartphone");
+                options.add("Aukey-Smartphone");
+                options.add("Romax-Smartphone");
+                options.add("Samsung-Smartphone");
+                options.add("Apple-Smartphone");
+                options.add("Huawei-Smartphone");
+                options.add("Xiaomi-Smartphone");
+                options.add("Oppo-Smartphone");
+                options.add("Motorola-Smartphone");
+                options.add("No esta en la lista de opciones");
+                options.add("No especifica");
+                break;
+            case "cartuchera":
+                options.add("Parker");
+                options.add("Sheaffer");
+                options.add("BIC");
+                options.add("Pilot");
+                options.add("Uni-ball");
+                options.add("Faber-Castell");
+                options.add("Pentel");
+                options.add("Zebra");
+                options.add("Lamy");
+                options.add("No esta en la lista de opciones");
+                options.add("No especifica");
+                break;
+            case "smartphone":
+                options.add("iPhone");
+                options.add("Galaxy");
+                options.add("Huawei");
+                options.add("Xiaomi");
+                options.add("Motorola");
+                options.add("No esta en la lista de opciones");
+                options.add("No especifica");
+                break;
+            case "dni":
+                options.add("Masculino");
+                options.add("Femenino");
+                break;
+            case "laptop":
+                options.add("Dell");
+                options.add("HP");
+                options.add("Lenovo");
+                options.add("Apple");
+                options.add("Apple (Mac)");
+                options.add("Acer");
+                options.add("Asus");
+                options.add("No esta en la lista de opciones");
+                options.add("No especifica");
+                break;
+            case "libro":
+                options.add("Personal");
+                options.add("De la universidad");
+                break;
+            case "mochila":
+                options.add("JanSport");
+                options.add("Vans");
+                options.add("Nike");
+                options.add("Adidas");
+                options.add("L.L.Bean");
+                options.add("No esta en la lista de opciones");
+                options.add("No especifica");
+                break;
+            case "reloj":
+                options.add("Casio");
+                options.add("Rolex");
+                options.add("Seiko");
+                options.add("Skagen");
+                options.add("Fossil");
+                options.add("No esta en la lista de opciones");
+                options.add("No especifica");
+                break;
+            case "Tomatodo":
+                options.add("Más de un litro");
+                options.add("Menos de un litro");
+                options.add("No especifica");
+                break;
+            case "otros":
+                options.add("No especifica");
+                break;
+            default:
+                options.add("No esta en la lista de opciones");
+                options.add("No especifica");
+                break;
+        }
+
+        // Configurar el adaptador del Spinner con las opciones actualizadas
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, options);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+    }
 }
+
