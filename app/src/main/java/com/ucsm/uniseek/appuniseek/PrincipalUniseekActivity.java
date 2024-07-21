@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -14,6 +15,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TimePicker;
 
 import androidx.activity.EdgeToEdge;
@@ -31,9 +33,10 @@ import java.util.List;
 public class PrincipalUniseekActivity extends AppCompatActivity implements View.OnClickListener {
     Button bfecha, bhora;
     ImageButton refreshButton;
-    EditText efecha, ehora, colorEditText, objetoEditText;
+    EditText efecha, ehora, colorEditText, objetoEditText, adicionalEditText, nombreEditText;
     ImageView imageView;
     Spinner spinner;
+    Switch reportSwitch;  // Añade una variable para el Switch
     private int dia, mes, ano, hora, minutos;
 
     @Override
@@ -58,6 +61,9 @@ public class PrincipalUniseekActivity extends AppCompatActivity implements View.
         objetoEditText = findViewById(R.id.objeto);
         imageView = findViewById(R.id.imagephoto);
         spinner = findViewById(R.id.marca_modelo);
+        adicionalEditText = findViewById(R.id.adicional); // Agregar referencia al EditText adicional
+        nombreEditText = findViewById(R.id.nombre);
+        reportSwitch = findViewById(R.id.sreport); // Inicializa el Switch
 
         // Configurar botón de actualización (refresh)
         refreshButton = findViewById(R.id.refresh);
@@ -86,6 +92,24 @@ public class PrincipalUniseekActivity extends AppCompatActivity implements View.
             updateSpinnerOptions(objeto);
         }
 
+        // Configurar el OnItemSelectedListener para el Spinner
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String selectedItem = (String) parent.getItemAtPosition(position);
+                if (selectedItem.equals("Otro")) {
+                    adicionalEditText.setEnabled(true);
+                } else {
+                    adicionalEditText.setEnabled(false);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                adicionalEditText.setEnabled(false);
+            }
+        });
+
         bfecha = findViewById(R.id.seleccionarFechaButton);
         bhora = findViewById(R.id.seleccionarHoraButton);
         efecha = findViewById(R.id.fechaEditText);
@@ -103,6 +127,15 @@ public class PrincipalUniseekActivity extends AppCompatActivity implements View.
 
         bfecha.setOnClickListener(this);
         bhora.setOnClickListener(this);
+
+        // Configurar el OnCheckedChangeListener para el Switch
+        reportSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                nombreEditText.setVisibility(View.GONE);
+            } else {
+                nombreEditText.setVisibility(View.VISIBLE);
+            }
+        });
     }
 
     @Override
@@ -149,7 +182,7 @@ public class PrincipalUniseekActivity extends AppCompatActivity implements View.
                 options.add("Puma");
                 options.add("Vans");
                 options.add("Rip Curl");
-                options.add("No esta en la lista de opciones");
+                options.add("Otro");
                 options.add("No especifica");
                 break;
             case "calculadora":
@@ -158,7 +191,7 @@ public class PrincipalUniseekActivity extends AppCompatActivity implements View.
                 options.add("Casio");
                 options.add("Canon");
                 options.add("Sharp");
-                options.add("No esta en la lista de opciones");
+                options.add("Otro");
                 options.add("No especifica");
                 break;
             case "cargador":
@@ -176,7 +209,7 @@ public class PrincipalUniseekActivity extends AppCompatActivity implements View.
                 options.add("Xiaomi-Smartphone");
                 options.add("Oppo-Smartphone");
                 options.add("Motorola-Smartphone");
-                options.add("No esta en la lista de opciones");
+                options.add("Otro");
                 options.add("No especifica");
                 break;
             case "cartuchera":
@@ -189,7 +222,7 @@ public class PrincipalUniseekActivity extends AppCompatActivity implements View.
                 options.add("Pentel");
                 options.add("Zebra");
                 options.add("Lamy");
-                options.add("No esta en la lista de opciones");
+                options.add("Otro");
                 options.add("No especifica");
                 break;
             case "smartphone":
@@ -198,7 +231,7 @@ public class PrincipalUniseekActivity extends AppCompatActivity implements View.
                 options.add("Huawei");
                 options.add("Xiaomi");
                 options.add("Motorola");
-                options.add("No esta en la lista de opciones");
+                options.add("Otro");
                 options.add("No especifica");
                 break;
             case "dni":
@@ -213,7 +246,7 @@ public class PrincipalUniseekActivity extends AppCompatActivity implements View.
                 options.add("Apple (Mac)");
                 options.add("Acer");
                 options.add("Asus");
-                options.add("No esta en la lista de opciones");
+                options.add("Otro");
                 options.add("No especifica");
                 break;
             case "libro":
@@ -226,7 +259,7 @@ public class PrincipalUniseekActivity extends AppCompatActivity implements View.
                 options.add("Nike");
                 options.add("Adidas");
                 options.add("L.L.Bean");
-                options.add("No esta en la lista de opciones");
+                options.add("Otro");
                 options.add("No especifica");
                 break;
             case "reloj":
@@ -234,28 +267,33 @@ public class PrincipalUniseekActivity extends AppCompatActivity implements View.
                 options.add("Rolex");
                 options.add("Seiko");
                 options.add("Skagen");
-                options.add("Fossil");
-                options.add("No esta en la lista de opciones");
+                options.add("Swatch");
+                options.add("Tissot");
+                options.add("Omega");
+                options.add("Tag Heuer");
+                options.add("Otro");
                 options.add("No especifica");
                 break;
-            case "Tomatodo":
-                options.add("Más de un litro");
-                options.add("Menos de un litro");
-                options.add("No especifica");
-                break;
-            case "otros":
+            case "tablet":
+                options.add("iPad");
+                options.add("Samsung Galaxy Tab");
+                options.add("Microsoft Surface");
+                options.add("Amazon Fire");
+                options.add("Lenovo Yoga");
+                options.add("Otro");
                 options.add("No especifica");
                 break;
             default:
-                options.add("No esta en la lista de opciones");
-                options.add("No especifica");
+                options.add("Grande");
+                options.add("Mediano");
+                options.add("Pequeño");
                 break;
         }
-
-        // Configurar el adaptador del Spinner con las opciones actualizadas
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, options);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
     }
 }
+
+
 

@@ -8,8 +8,8 @@
 
     <ImageButton
         android:id="@+id/button"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
         android:layout_centerInParent="true"
         android:background="@drawable/combined_background"
         app:srcCompat="@android:drawable/ic_menu_camera"
