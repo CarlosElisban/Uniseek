@@ -17,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,20 +25,25 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.ucsm.uniseek.R;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class PrincipalUniseekActivity extends AppCompatActivity implements View.OnClickListener {
-    Button bfecha, bhora;
+    Button bfecha, bhora, aceptarButton;
     ImageButton refreshButton;
     EditText efecha, ehora, colorEditText, objetoEditText, adicionalEditText, nombreEditText;
     ImageView imageView;
     Spinner spinner;
     Switch reportSwitch;  // Añade una variable para el Switch
     private int dia, mes, ano, hora, minutos;
+
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +70,7 @@ public class PrincipalUniseekActivity extends AppCompatActivity implements View.
         adicionalEditText = findViewById(R.id.adicional); // Agregar referencia al EditText adicional
         nombreEditText = findViewById(R.id.nombre);
         reportSwitch = findViewById(R.id.sreport); // Inicializa el Switch
+
 
         // Configurar botón de actualización (refresh)
         refreshButton = findViewById(R.id.refresh);
@@ -115,6 +122,9 @@ public class PrincipalUniseekActivity extends AppCompatActivity implements View.
         efecha = findViewById(R.id.fechaEditText);
         ehora = findViewById(R.id.horaEditText);
 
+        //Cloud Firestore
+        aceptarButton = findViewById(R.id.button3);
+
         Calendar calendario = Calendar.getInstance();
         dia = calendario.get(Calendar.DAY_OF_MONTH);
         mes = calendario.get(Calendar.MONTH);
@@ -127,6 +137,8 @@ public class PrincipalUniseekActivity extends AppCompatActivity implements View.
 
         bfecha.setOnClickListener(this);
         bhora.setOnClickListener(this);
+        //Cloud Firestore
+        aceptarButton.setOnClickListener(this);
 
         // Configurar el OnCheckedChangeListener para el Switch
         reportSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -141,6 +153,7 @@ public class PrincipalUniseekActivity extends AppCompatActivity implements View.
     @Override
     public void onClick(View v) {
         if (v == bfecha) {
+            // Código para seleccionar la fecha
             final Calendar c = Calendar.getInstance();
             dia = c.get(Calendar.DAY_OF_MONTH);
             mes = c.get(Calendar.MONTH);
@@ -153,8 +166,8 @@ public class PrincipalUniseekActivity extends AppCompatActivity implements View.
                 }
             }, dia, mes, ano);
             datePickerDialog.show();
-        }
-        if (v == bhora) {
+        } else if (v == bhora) {
+            // Código para seleccionar la hora
             final Calendar c = Calendar.getInstance();
             hora = c.get(Calendar.HOUR_OF_DAY);
             minutos = c.get(Calendar.MINUTE);
@@ -166,6 +179,10 @@ public class PrincipalUniseekActivity extends AppCompatActivity implements View.
                 }
             }, hora, minutos, false);
             timePickerDialog.show();
+            //FireStore
+        } else if (v == aceptarButton) {
+            // Código para guardar en Firestore
+            guardarDatosEnFirestore();
         }
     }
 
@@ -293,6 +310,51 @@ public class PrincipalUniseekActivity extends AppCompatActivity implements View.
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
     }
+
+
+    //FireStore
+    private void guardarDatosEnFirestore() {
+        String color = colorEditText.getText().toString();
+        String objeto = objetoEditText.getText().toString();
+        String fecha = efecha.getText().toString();
+        String hora = ehora.getText().toString();
+        String adicional = adicionalEditText.getText().toString();
+        String marcaModelo = spinner.getSelectedItem().toString();
+        String reporte;
+
+        if (reportSwitch.isChecked()) {
+            reporte = "Reportado a la oficina de objetos perdidos";
+        } else {
+            reporte = nombreEditText.getText().toString();
+        }
+
+        // Crear un mapa de datos para almacenar en Firestore
+        Map<String, Object> objetoPerdido = new HashMap<>();
+        objetoPerdido.put("Color", color);
+        objetoPerdido.put("Objeto", objeto);
+        objetoPerdido.put("Fecha", fecha);
+        objetoPerdido.put("Hora", hora);
+        objetoPerdido.put("Reporte", reporte);
+
+        if (marcaModelo.equals("Otro")) {
+            objetoPerdido.put("Adicional", adicional);
+        } else {
+            objetoPerdido.put("Adicional", marcaModelo);
+        }
+
+        // Almacenar en Firestore
+        db.collection("Objetos perdidos")
+                .add(objetoPerdido)
+                .addOnSuccessListener(documentReference -> {
+                    // Acción a tomar en caso de éxito
+                    Toast.makeText(this, "Datos guardados con éxito", Toast.LENGTH_SHORT).show();
+                })
+                .addOnFailureListener(e -> {
+                    // Acción a tomar en caso de error
+                    Toast.makeText(this, "Error al guardar los datos", Toast.LENGTH_SHORT).show();
+                });
+    }
+
 }
 
 
