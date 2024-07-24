@@ -1,0 +1,139 @@
+package com.ucsm.uniseek.appuniseek;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
+import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.ucsm.uniseek.R;
+
+public class LoginauthActivity extends AppCompatActivity {
+    private static final String TAG = "LoginauthActivity"; // Declarar TAG
+    Button login, register;
+    EditText email, password;
+    FirebaseAuth mAuth = FirebaseAuth.getInstance();
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_loginauth);
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+        setup();
+    }
+
+    private void setup() {
+        login = findViewById(R.id.loginButton);
+        register = findViewById(R.id.registerButton);
+        email = findViewById(R.id.emailEditText);
+        password = findViewById(R.id.passwordEditText);
+
+        register.setOnClickListener(v -> {
+            String emailText = email.getText().toString();
+            String passwordText = password.getText().toString();
+            if (!emailText.isEmpty() && !passwordText.isEmpty()) {
+                mAuth.createUserWithEmailAndPassword(emailText, passwordText)
+                        .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                if (task.isSuccessful()) {
+                                    // Registro exitoso
+                                    Log.d(TAG, "createUserWithEmail:success");
+                                    FirebaseUser user = mAuth.getCurrentUser();
+                                    if (user != null) {
+                                        user.sendEmailVerification()
+                                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                        if (task.isSuccessful()) {
+                                                            Toast.makeText(LoginauthActivity.this, "Verification email sent to " + user.getEmail(), Toast.LENGTH_SHORT).show();
+                                                        } else {
+                                                            Log.e(TAG, "sendEmailVerification", task.getException());
+                                                            Toast.makeText(LoginauthActivity.this, "Failed to send verification email.", Toast.LENGTH_SHORT).show();
+                                                        }
+                                                    }
+                                                });
+                                    }
+                                    updateUI(user);
+                                } else {
+                                    // Si el registro falla, mostrar un mensaje al usuario.
+                                    Log.w(TAG, "createUserWithEmail:failure", task.getException());
+                                    String errorMessage = "Authentication failed.";
+                                    if (task.getException() != null && task.getException().getMessage().contains("The email address is badly formatted")) {
+                                        errorMessage = "Invalid email format.";
+                                    } else if (task.getException() != null && task.getException().getMessage().contains("The email address is not allowed")) {
+                                        errorMessage = "Email domain not allowed.";
+                                    }
+                                    Toast.makeText(LoginauthActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
+                                    updateUI(null);
+                                }
+                            }
+                        });
+            }
+        });
+        // Inicio de sesión de usuario
+        login.setOnClickListener(v -> {
+            String emailText = email.getText().toString();
+            String passwordText = password.getText().toString();
+            if (!emailText.isEmpty() && !passwordText.isEmpty()) {
+                mAuth.signInWithEmailAndPassword(emailText, passwordText)
+                        .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                if (task.isSuccessful()) {
+                                    // Inicio de sesión exitoso
+                                    Log.d(TAG, "signInWithEmail:success");
+                                    FirebaseUser user = mAuth.getCurrentUser();
+                                    if (user != null && user.isEmailVerified()) {
+                                        // Redirigir a FirstUniseekActivity
+                                        Intent intent = new Intent(LoginauthActivity.this, FirstUniseekActivity.class);
+                                        startActivity(intent);
+                                        finish(); // Opcional: Cierra la actividad actual
+                                    } else if (user != null) {
+                                        Toast.makeText(LoginauthActivity.this, "Please verify your email before logging in.", Toast.LENGTH_SHORT).show();
+                                    }
+                                } else {
+                                    // Si el inicio de sesión falla, mostrar un mensaje al usuario.
+                                    Log.w(TAG, "signInWithEmail:failure", task.getException());
+                                    Toast.makeText(LoginauthActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+            }
+        });
+    }
+
+    private void updateUI(FirebaseUser user) {
+       /*
+        if (user != null) {
+            // Usuario autenticado correctamente
+            // Navegar a la pantalla principal de la aplicación
+            Intent intent = new Intent(LoginauthActivity.this, MainActivity.class);
+            startActivity(intent);
+            finish(); // Finaliza la actividad actual para que el usuario no pueda volver a ella
+        } else {
+            // Autenticación fallida, mantener al usuario en la pantalla de login
+            // Aquí ya hemos mostrado un Toast con el mensaje de error en el OnCompleteListener
+        }
+
+        */
+    }
+}
