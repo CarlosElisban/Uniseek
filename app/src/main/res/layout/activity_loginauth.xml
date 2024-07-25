@@ -79,4 +79,22 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="16dp" />
 
+    <!-- ¿Olvidaste tu contraseña? Button -->
+    <Button
+        android:id="@+id/contraseñalost"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="¿Olvidaste tu contraseña?"
+        android:backgroundTint="@color/buttonColor"
+        android:textColor="@android:color/white"
+        android:padding="12dp"
+        app:layout_constraintTop_toBottomOf="@id/registerButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp" />
+
+    <!-- Restablecer Contraseña Button -->
+
 </androidx.constraintlayout.widget.ConstraintLayout>
+
+

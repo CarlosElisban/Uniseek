@@ -59,6 +59,7 @@ public class FirstUniseekActivity extends AppCompatActivity {
                 }
             }
         });
+
     }
 
     public void classifyImage(Bitmap image){
@@ -122,16 +123,22 @@ public class FirstUniseekActivity extends AppCompatActivity {
 
             //result.setText(classes[maxPos]+" color "+classes2[maxPos2]);
 
-            Intent intent = new Intent(FirstUniseekActivity.this, PrincipalUniseekActivity.class);
-            intent.putExtra("objeto", classes[maxPos]);
-            intent.putExtra("color", classes2[maxPos2]);
+
+            Intent intent2 = new Intent(FirstUniseekActivity.this, PrincipalUniseekActivity.class);
+            intent2.putExtra("objeto", classes[maxPos]);
+            intent2.putExtra("color", classes2[maxPos2]);
+            Intent intent = getIntent();
+            if (intent != null) {
+                String email = intent.getStringExtra("email");
+                intent2.putExtra("email",email);
+            }
 
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             image.compress(Bitmap.CompressFormat.PNG, 100, stream);
             byte[] byteArray = stream.toByteArray();
-            intent.putExtra("imagen", byteArray);
+            intent2.putExtra("imagen", byteArray);
 
-            startActivity(intent);
+            startActivity(intent2);
 
             /*
             //Objetos

@@ -23,7 +23,7 @@ import com.ucsm.uniseek.R;
 
 public class LoginauthActivity extends AppCompatActivity {
     private static final String TAG = "LoginauthActivity"; // Declarar TAG
-    Button login, register;
+    Button login, register, lostPassword;
     EditText email, password;
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
@@ -43,6 +43,7 @@ public class LoginauthActivity extends AppCompatActivity {
     private void setup() {
         login = findViewById(R.id.loginButton);
         register = findViewById(R.id.registerButton);
+        lostPassword = findViewById(R.id.contraseñalost); // Añadir la referencia al botón "contraseñalost"
         email = findViewById(R.id.emailEditText);
         password = findViewById(R.id.passwordEditText);
 
@@ -72,7 +73,6 @@ public class LoginauthActivity extends AppCompatActivity {
                                                     }
                                                 });
                                     }
-                                    updateUI(user);
                                 } else {
                                     // Si el registro falla, mostrar un mensaje al usuario.
                                     Log.w(TAG, "createUserWithEmail:failure", task.getException());
@@ -83,12 +83,12 @@ public class LoginauthActivity extends AppCompatActivity {
                                         errorMessage = "Email domain not allowed.";
                                     }
                                     Toast.makeText(LoginauthActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
-                                    updateUI(null);
                                 }
                             }
                         });
             }
         });
+
         // Inicio de sesión de usuario
         login.setOnClickListener(v -> {
             String emailText = email.getText().toString();
@@ -105,6 +105,7 @@ public class LoginauthActivity extends AppCompatActivity {
                                     if (user != null && user.isEmailVerified()) {
                                         // Redirigir a FirstUniseekActivity
                                         Intent intent = new Intent(LoginauthActivity.this, FirstUniseekActivity.class);
+                                        intent.putExtra("email", user.getEmail());
                                         startActivity(intent);
                                         finish(); // Opcional: Cierra la actividad actual
                                     } else if (user != null) {
@@ -119,21 +120,14 @@ public class LoginauthActivity extends AppCompatActivity {
                         });
             }
         });
-    }
 
-    private void updateUI(FirebaseUser user) {
-       /*
-        if (user != null) {
-            // Usuario autenticado correctamente
-            // Navegar a la pantalla principal de la aplicación
-            Intent intent = new Intent(LoginauthActivity.this, MainActivity.class);
+        // Redireccionar a LostPasswordActivity
+        lostPassword.setOnClickListener(v -> {
+            Intent intent = new Intent(LoginauthActivity.this, LostPasswordActivity.class);
             startActivity(intent);
-            finish(); // Finaliza la actividad actual para que el usuario no pueda volver a ella
-        } else {
-            // Autenticación fallida, mantener al usuario en la pantalla de login
-            // Aquí ya hemos mostrado un Toast con el mensaje de error en el OnCompleteListener
-        }
-
-        */
+        });
     }
+
 }
+
+

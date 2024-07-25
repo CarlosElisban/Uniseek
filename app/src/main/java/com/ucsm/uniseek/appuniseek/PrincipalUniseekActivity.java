@@ -82,11 +82,13 @@ public class PrincipalUniseekActivity extends AppCompatActivity implements View.
         });
 
         // Recibir datos del Intent
-        Intent intent = getIntent();
-        if (intent != null) {
-            String objeto = intent.getStringExtra("objeto");
-            String color = intent.getStringExtra("color");
-            byte[] byteArray = intent.getByteArrayExtra("imagen");
+        Intent intent2 = getIntent();
+        if (intent2 != null) {
+            String objeto = intent2.getStringExtra("objeto");
+            String color = intent2.getStringExtra("color");
+            byte[] byteArray = intent2.getByteArrayExtra("imagen");
+
+            String email = intent2.getStringExtra("email");
 
             objetoEditText.setText(objeto);
             colorEditText.setText(color);
@@ -94,6 +96,12 @@ public class PrincipalUniseekActivity extends AppCompatActivity implements View.
                 Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
                 imageView.setImageBitmap(bitmap);
             }
+
+
+            if (email != null) {
+                nombreEditText.setText(email);
+            }
+
 
             // Actualizar opciones del Spinner según el color recibido
             updateSpinnerOptions(objeto);
