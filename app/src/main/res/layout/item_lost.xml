@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="16dp"
+    android:background="@color/teal_700">
+
+    <ImageView
+        android:id="@+id/item_image"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:scaleType="centerCrop"
+        android:background="@drawable/image_border"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <TextView
+        android:id="@+id/item_objeto_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Objeto:"
+        android:textSize="16sp"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@id/item_image"
+        app:layout_constraintTop_toTopOf="@id/item_image" />
+
+    <TextView
+        android:id="@+id/item_objeto"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:textColor="@color/black"
+        app:layout_constraintStart_toEndOf="@id/item_objeto_label"
+        app:layout_constraintTop_toTopOf="@id/item_objeto_label"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        android:layout_marginStart="8dp" />
+
+    <TextView
+        android:id="@+id/item_color_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Color:"
+        android:textSize="16sp"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@id/item_image"
+        app:layout_constraintTop_toBottomOf="@id/item_objeto_label"/>
+
+    <TextView
+        android:id="@+id/item_color"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:textColor="@color/black"
+        app:layout_constraintStart_toEndOf="@id/item_color_label"
+        app:layout_constraintTop_toTopOf="@id/item_color_label"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        android:layout_marginStart="8dp" />
+
+    <TextView
+        android:id="@+id/item_fecha_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Fecha:"
+        android:textSize="16sp"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@id/item_image"
+        app:layout_constraintTop_toBottomOf="@id/item_color_label" />
+
+    <TextView
+        android:id="@+id/item_fecha"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:textColor="@color/black"
+        app:layout_constraintStart_toEndOf="@id/item_fecha_label"
+        app:layout_constraintTop_toTopOf="@id/item_fecha_label"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        android:layout_marginStart="8dp" />
+
+    <TextView
+        android:id="@+id/item_hora_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Hora:"
+        android:textSize="16sp"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@id/item_image"
+        app:layout_constraintTop_toBottomOf="@id/item_fecha_label"/>
+
+    <TextView
+        android:id="@+id/item_hora"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:textColor="@color/black"
+        app:layout_constraintStart_toEndOf="@id/item_hora_label"
+        app:layout_constraintTop_toTopOf="@id/item_hora_label"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        android:layout_marginStart="8dp" />
+
+    <TextView
+        android:id="@+id/item_adicional_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Adicional:"
+        android:textSize="16sp"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@id/item_image"
+        app:layout_constraintTop_toBottomOf="@id/item_hora_label" />
+
+    <TextView
+        android:id="@+id/item_adicional"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:textColor="@color/black"
+        app:layout_constraintStart_toEndOf="@id/item_adicional_label"
+        app:layout_constraintTop_toTopOf="@id/item_adicional_label"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        android:layout_marginStart="8dp" />
+
+    <TextView
+        android:id="@+id/item_reporte_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Reporte:"
+        android:textSize="16sp"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@id/item_image"
+        app:layout_constraintTop_toBottomOf="@id/item_adicional_label"/>
+
+    <TextView
+        android:id="@+id/item_reporte"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:textColor="@color/black"
+        app:layout_constraintStart_toEndOf="@id/item_reporte_label"
+        app:layout_constraintTop_toTopOf="@id/item_reporte_label"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        android:layout_marginStart="8dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+

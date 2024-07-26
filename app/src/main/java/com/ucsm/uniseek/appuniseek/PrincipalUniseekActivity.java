@@ -5,7 +5,9 @@ import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -26,8 +28,12 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.ucsm.uniseek.R;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -40,10 +46,12 @@ public class PrincipalUniseekActivity extends AppCompatActivity implements View.
     EditText efecha, ehora, colorEditText, objetoEditText, adicionalEditText, nombreEditText;
     ImageView imageView;
     Spinner spinner;
-    Switch reportSwitch;  // Añade una variable para el Switch
+    Switch reportSwitch;
     private int dia, mes, ano, hora, minutos;
+    private Bitmap bitmap;
 
     FirebaseFirestore db = FirebaseFirestore.getInstance();
+    FirebaseStorage storage = FirebaseStorage.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,17 +75,14 @@ public class PrincipalUniseekActivity extends AppCompatActivity implements View.
         objetoEditText = findViewById(R.id.objeto);
         imageView = findViewById(R.id.imagephoto);
         spinner = findViewById(R.id.marca_modelo);
-        adicionalEditText = findViewById(R.id.adicional); // Agregar referencia al EditText adicional
+        adicionalEditText = findViewById(R.id.adicional);
         nombreEditText = findViewById(R.id.nombre);
-        reportSwitch = findViewById(R.id.sreport); // Inicializa el Switch
-
+        reportSwitch = findViewById(R.id.sreport);
 
         // Configurar botón de actualización (refresh)
         refreshButton = findViewById(R.id.refresh);
         refreshButton.setOnClickListener(v -> {
-            // Obtener el texto del EditText objeto
             String objeto = objetoEditText.getText().toString().trim();
-            // Actualizar las opciones del Spinner
             updateSpinnerOptions(objeto);
         });
 
@@ -93,21 +98,17 @@ public class PrincipalUniseekActivity extends AppCompatActivity implements View.
             objetoEditText.setText(objeto);
             colorEditText.setText(color);
             if (byteArray != null) {
-                Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+                bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
                 imageView.setImageBitmap(bitmap);
             }
-
 
             if (email != null) {
                 nombreEditText.setText(email);
             }
 
-
-            // Actualizar opciones del Spinner según el color recibido
             updateSpinnerOptions(objeto);
         }
 
-        // Configurar el OnItemSelectedListener para el Spinner
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -130,7 +131,6 @@ public class PrincipalUniseekActivity extends AppCompatActivity implements View.
         efecha = findViewById(R.id.fechaEditText);
         ehora = findViewById(R.id.horaEditText);
 
-        //Cloud Firestore
         aceptarButton = findViewById(R.id.button3);
 
         Calendar calendario = Calendar.getInstance();
@@ -145,10 +145,8 @@ public class PrincipalUniseekActivity extends AppCompatActivity implements View.
 
         bfecha.setOnClickListener(this);
         bhora.setOnClickListener(this);
-        //Cloud Firestore
         aceptarButton.setOnClickListener(this);
 
-        // Configurar el OnCheckedChangeListener para el Switch
         reportSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
                 nombreEditText.setVisibility(View.GONE);
@@ -161,35 +159,25 @@ public class PrincipalUniseekActivity extends AppCompatActivity implements View.
     @Override
     public void onClick(View v) {
         if (v == bfecha) {
-            // Código para seleccionar la fecha
             final Calendar c = Calendar.getInstance();
             dia = c.get(Calendar.DAY_OF_MONTH);
             mes = c.get(Calendar.MONTH);
             ano = c.get(Calendar.YEAR);
 
-            DatePickerDialog datePickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
-                @Override
-                public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                    efecha.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
-                }
+            DatePickerDialog datePickerDialog = new DatePickerDialog(this, (view, year, monthOfYear, dayOfMonth) -> {
+                efecha.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
             }, dia, mes, ano);
             datePickerDialog.show();
         } else if (v == bhora) {
-            // Código para seleccionar la hora
             final Calendar c = Calendar.getInstance();
             hora = c.get(Calendar.HOUR_OF_DAY);
             minutos = c.get(Calendar.MINUTE);
 
-            TimePickerDialog timePickerDialog = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
-                @Override
-                public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                    ehora.setText(hourOfDay + ":" + minute);
-                }
+            TimePickerDialog timePickerDialog = new TimePickerDialog(this, (view, hourOfDay, minute) -> {
+                ehora.setText(hourOfDay + ":" + minute);
             }, hora, minutos, false);
             timePickerDialog.show();
-            //FireStore
         } else if (v == aceptarButton) {
-            // Código para guardar en Firestore
             guardarDatosEnFirestore();
         }
     }
@@ -319,8 +307,6 @@ public class PrincipalUniseekActivity extends AppCompatActivity implements View.
         spinner.setAdapter(adapter);
     }
 
-
-    //FireStore
     private void guardarDatosEnFirestore() {
         String color = colorEditText.getText().toString();
         String objeto = objetoEditText.getText().toString();
@@ -350,19 +336,46 @@ public class PrincipalUniseekActivity extends AppCompatActivity implements View.
             objetoPerdido.put("Adicional", marcaModelo);
         }
 
-        // Almacenar en Firestore
-        db.collection("Objetos perdidos")
-                .add(objetoPerdido)
-                .addOnSuccessListener(documentReference -> {
-                    // Acción a tomar en caso de éxito
-                    Toast.makeText(this, "Datos guardados con éxito", Toast.LENGTH_SHORT).show();
-                })
-                .addOnFailureListener(e -> {
-                    // Acción a tomar en caso de error
-                    Toast.makeText(this, "Error al guardar los datos", Toast.LENGTH_SHORT).show();
-                });
-    }
+        // Subir la imagen a Firebase Storage
+        if (bitmap != null) {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            byte[] data = baos.toByteArray();
 
+            // Crear una referencia a la carpeta "objetos" en Firebase Storage
+            StorageReference storageRef = storage.getReference().child("objetos/" + objeto + "_" + System.currentTimeMillis() + ".jpg");
+
+            UploadTask uploadTask = storageRef.putBytes(data);
+            uploadTask.addOnSuccessListener(taskSnapshot -> {
+                storageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                    // Guardar la URL de la imagen en Firestore
+                    objetoPerdido.put("ImagenURL", uri.toString());
+
+                    // Almacenar en Firestore
+                    db.collection("Objetos perdidos")
+                            .add(objetoPerdido)
+                            .addOnSuccessListener(documentReference -> {
+                                Toast.makeText(this, "Datos guardados con éxito", Toast.LENGTH_SHORT).show();
+                            })
+                            .addOnFailureListener(e -> {
+                                Toast.makeText(this, "Error al guardar los datos", Toast.LENGTH_SHORT).show();
+                            });
+                });
+            }).addOnFailureListener(e -> {
+                Toast.makeText(this, "Error al subir la imagen", Toast.LENGTH_SHORT).show();
+            });
+        } else {
+            // Si no hay imagen, simplemente guarda los datos en Firestore
+            db.collection("Objetos perdidos")
+                    .add(objetoPerdido)
+                    .addOnSuccessListener(documentReference -> {
+                        Toast.makeText(this, "Datos guardados con éxito", Toast.LENGTH_SHORT).show();
+                    })
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(this, "Error al guardar los datos", Toast.LENGTH_SHORT).show();
+                    });
+        }
+    }
 }
 
 

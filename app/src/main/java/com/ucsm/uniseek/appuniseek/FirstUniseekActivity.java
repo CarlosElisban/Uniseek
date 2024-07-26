@@ -32,7 +32,7 @@ public class FirstUniseekActivity extends AppCompatActivity {
 
     TextView result, confidence;
     ImageView imageView;
-    ImageButton picture;
+    ImageButton picture, searchButton;
     int imageSize = 224;
 
     @Override
@@ -45,6 +45,16 @@ public class FirstUniseekActivity extends AppCompatActivity {
         imageView = findViewById(R.id.imageView);
         */
         picture = findViewById(R.id.button);
+        searchButton = findViewById(R.id.searchButton);
+
+        // Add OnClickListener for searchButton
+        searchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent searchIntent = new Intent(FirstUniseekActivity.this, SearchObjectActivity.class);
+                startActivity(searchIntent);
+            }
+        });
 
         picture.setOnClickListener(new View.OnClickListener() {
             @Override
