@@ -47,9 +47,23 @@
         android:background="@drawable/edit_text_background"
         app:layout_constraintTop_toBottomOf="@id/emailEditText"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/passwordVisibilityButton"
         app:layout_constraintWidth_default="spread"
         android:layout_marginTop="16dp" />
+
+    <!-- Password Visibility Button -->
+    <ImageButton
+        android:id="@+id/passwordVisibilityButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_visibility"
+        android:background="@android:color/transparent"
+        app:layout_constraintTop_toBottomOf="@id/emailEditText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/passwordEditText"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="24dp"/>
 
     <!-- Login Button -->
     <Button
@@ -93,8 +107,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="16dp" />
 
-    <!-- Restablecer Contraseña Button -->
-
 </androidx.constraintlayout.widget.ConstraintLayout>
+
 
 

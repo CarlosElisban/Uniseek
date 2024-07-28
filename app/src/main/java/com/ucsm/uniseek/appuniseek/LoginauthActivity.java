@@ -3,8 +3,10 @@ package com.ucsm.uniseek.appuniseek;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -25,7 +27,9 @@ public class LoginauthActivity extends AppCompatActivity {
     private static final String TAG = "LoginauthActivity"; // Declarar TAG
     Button login, register, lostPassword;
     EditText email, password;
+    ImageButton passwordVisibilityButton;
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    boolean isPasswordVisible = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +50,22 @@ public class LoginauthActivity extends AppCompatActivity {
         lostPassword = findViewById(R.id.contraseñalost); // Añadir la referencia al botón "contraseñalost"
         email = findViewById(R.id.emailEditText);
         password = findViewById(R.id.passwordEditText);
+        passwordVisibilityButton = findViewById(R.id.passwordVisibilityButton);
+
+        passwordVisibilityButton.setOnClickListener(v -> {
+            if (isPasswordVisible) {
+                // Ocultar contraseña
+                password.setInputType(android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                passwordVisibilityButton.setImageResource(R.drawable.ic_visibility); // Cambiar ícono
+            } else {
+                // Mostrar contraseña
+                password.setInputType(android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                passwordVisibilityButton.setImageResource(R.drawable.ic_visibility_off); // Cambiar ícono
+            }
+            // Mover el cursor al final del texto
+            password.setSelection(password.getText().length());
+            isPasswordVisible = !isPasswordVisible;
+        });
 
         register.setOnClickListener(v -> {
             String emailText = email.getText().toString();
@@ -127,7 +147,7 @@ public class LoginauthActivity extends AppCompatActivity {
             startActivity(intent);
         });
     }
-
 }
+
 
 

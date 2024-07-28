@@ -1,11 +1,16 @@
 package com.ucsm.uniseek.appuniseek;
 
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.TimePicker;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,11 +21,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.ucsm.uniseek.R;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
-
-import com.ucsm.uniseek.R;
 
 public class SearchObjectActivity extends AppCompatActivity {
 
@@ -28,6 +33,9 @@ public class SearchObjectActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private LostItemAdapter adapter;
     private List<LostItem> lostItemList;
+    private EditText filterColor, filterAdicional;
+    private TextView filterFecha, filterHora;
+    private Calendar calendar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +51,16 @@ public class SearchObjectActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
 
         SearchView searchView = findViewById(R.id.search_view);
+        filterColor = findViewById(R.id.filter_color);
+        filterFecha = findViewById(R.id.filter_fecha);
+        filterHora = findViewById(R.id.filter_hora);
+        filterAdicional = findViewById(R.id.filter_adicional);
+
+        calendar = Calendar.getInstance();
+
+        filterFecha.setOnClickListener(v -> showDatePickerDialog());
+        filterHora.setOnClickListener(v -> showTimePickerDialog());
+
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -61,7 +79,44 @@ public class SearchObjectActivity extends AppCompatActivity {
         });
     }
 
+    private void showDatePickerDialog() {
+        DatePickerDialog datePickerDialog = new DatePickerDialog(this, (view, year, month, dayOfMonth) -> {
+            calendar.set(Calendar.YEAR, year);
+            calendar.set(Calendar.MONTH, month);
+            calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+            updateDateLabel();
+        }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
+        datePickerDialog.show();
+    }
+
+    private void showTimePickerDialog() {
+        TimePickerDialog timePickerDialog = new TimePickerDialog(this, (view, hourOfDay, minute) -> {
+            calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+            calendar.set(Calendar.MINUTE, minute);
+            updateTimeLabel();
+        }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), true);
+        timePickerDialog.show();
+    }
+
+    private void updateDateLabel() {
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+        int month = calendar.get(Calendar.MONTH) + 1;
+        int year = calendar.get(Calendar.YEAR);
+        filterFecha.setText(day + "/" + month + "/" + year);
+    }
+
+    private void updateTimeLabel() {
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        int minute = calendar.get(Calendar.MINUTE);
+        filterHora.setText(String.format("%02d:%02d", hour, minute));
+    }
+
     private void searchLostItems(String query) {
+        String color = filterColor.getText().toString().trim();
+        String fecha = filterFecha.getText().toString().trim();
+        String hora = filterHora.getText().toString().trim();
+        String adicional = filterAdicional.getText().toString().trim();
+
         db.collection("Objetos perdidos")
                 .whereEqualTo("Objeto", query)
                 .get()
@@ -69,15 +124,23 @@ public class SearchObjectActivity extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         lostItemList.clear();
                         for (QueryDocumentSnapshot document : task.getResult()) {
-                            LostItem item = new LostItem();
-                            item.setAdicional(document.getString("Adicional"));
-                            item.setColor(document.getString("Color"));
-                            item.setFecha(document.getString("Fecha"));
-                            item.setHora(document.getString("Hora"));
-                            item.setImagenURL(document.getString("ImagenURL"));
-                            item.setObjeto(document.getString("Objeto"));
-                            item.setReporte(document.getString("Reporte"));
-                            lostItemList.add(item);
+                            boolean matches = true;
+                            if (!color.isEmpty() && !color.equals(document.getString("Color"))) matches = false;
+                            if (!fecha.isEmpty() && !fecha.equals(document.getString("Fecha"))) matches = false;
+                            if (!hora.isEmpty() && !hora.equals(document.getString("Hora"))) matches = false;
+                            if (!adicional.isEmpty() && !adicional.equals(document.getString("Adicional"))) matches = false;
+
+                            if (matches) {
+                                LostItem item = new LostItem();
+                                item.setAdicional(document.getString("Adicional"));
+                                item.setColor(document.getString("Color"));
+                                item.setFecha(document.getString("Fecha"));
+                                item.setHora(document.getString("Hora"));
+                                item.setImagenURL(document.getString("ImagenURL"));
+                                item.setObjeto(document.getString("Objeto"));
+                                item.setReporte(document.getString("Reporte"));
+                                lostItemList.add(item);
+                            }
                         }
                         adapter.notifyDataSetChanged();
                     } else {
@@ -171,4 +234,6 @@ public class SearchObjectActivity extends AppCompatActivity {
         }
     }
 }
+
+
 
