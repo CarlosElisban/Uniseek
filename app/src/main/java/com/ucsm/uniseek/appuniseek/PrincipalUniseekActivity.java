@@ -179,6 +179,8 @@ public class PrincipalUniseekActivity extends AppCompatActivity implements View.
             timePickerDialog.show();
         } else if (v == aceptarButton) {
             guardarDatosEnFirestore();
+            Intent intent = new Intent(PrincipalUniseekActivity.this, FirstUniseekActivity.class);
+            startActivity(intent);
         }
     }
 

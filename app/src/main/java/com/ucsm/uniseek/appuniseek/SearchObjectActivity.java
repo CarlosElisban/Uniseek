@@ -2,10 +2,12 @@ package com.ucsm.uniseek.appuniseek;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -36,12 +38,13 @@ public class SearchObjectActivity extends AppCompatActivity {
     private EditText filterColor, filterAdicional;
     private TextView filterFecha, filterHora;
     private Calendar calendar;
+    private Button toggleFiltersButton,volver;
+    private boolean filtersVisible = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_object);
-
         db = FirebaseFirestore.getInstance();
         recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -55,6 +58,13 @@ public class SearchObjectActivity extends AppCompatActivity {
         filterFecha = findViewById(R.id.filter_fecha);
         filterHora = findViewById(R.id.filter_hora);
         filterAdicional = findViewById(R.id.filter_adicional);
+        toggleFiltersButton = findViewById(R.id.toggle_filters_button);
+        volver = findViewById(R.id.volver);
+
+        filterColor.setVisibility(View.GONE);
+        filterFecha.setVisibility(View.GONE);
+        filterHora.setVisibility(View.GONE);
+        filterAdicional.setVisibility(View.GONE);
 
         calendar = Calendar.getInstance();
 
@@ -77,8 +87,29 @@ public class SearchObjectActivity extends AppCompatActivity {
                 return false;
             }
         });
+        toggleFiltersButton.setOnClickListener(v -> toggleFiltersVisibility());
+        volver.setOnClickListener(v -> {
+            Intent intent = new Intent(SearchObjectActivity.this, FirstUniseekActivity.class);
+            startActivity(intent);
+        });
     }
+    private void toggleFiltersVisibility() {
+        if (filtersVisible) {
+            filterColor.setVisibility(View.VISIBLE);
+            filterFecha.setVisibility(View.VISIBLE);
+            filterHora.setVisibility(View.VISIBLE);
+            filterAdicional.setVisibility(View.VISIBLE);
+            toggleFiltersButton.setText("Ocultar Filtros");
 
+        } else {
+            filterColor.setVisibility(View.GONE);
+            filterFecha.setVisibility(View.GONE);
+            filterHora.setVisibility(View.GONE);
+            filterAdicional.setVisibility(View.GONE);
+            toggleFiltersButton.setText("Mostrar Filtros");
+        }
+        filtersVisible = !filtersVisible;
+    }
     private void showDatePickerDialog() {
         DatePickerDialog datePickerDialog = new DatePickerDialog(this, (view, year, month, dayOfMonth) -> {
             calendar.set(Calendar.YEAR, year);
@@ -216,6 +247,16 @@ public class SearchObjectActivity extends AppCompatActivity {
                 itemAdicional = itemView.findViewById(R.id.item_adicional);
                 itemReporte = itemView.findViewById(R.id.item_reporte);
                 itemObjeto = itemView.findViewById(R.id.item_objeto);
+
+                itemImage.setOnClickListener(v -> {
+                    int position = getAdapterPosition();
+                    if (position != RecyclerView.NO_POSITION) {
+                        LostItem clickedItem = lostItemList.get(position);
+                        Intent intent = new Intent(itemView.getContext(), FullscreenImageActivity.class);
+                        intent.putExtra("image_url", clickedItem.getImagenURL());
+                        itemView.getContext().startActivity(intent);
+                    }
+                });
             }
 
             public void bind(LostItem item) {
@@ -233,6 +274,7 @@ public class SearchObjectActivity extends AppCompatActivity {
             }
         }
     }
+
 }
 
 

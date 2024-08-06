@@ -1,6 +1,7 @@
 package com.ucsm.uniseek.appuniseek;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -11,9 +12,14 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.activity.OnBackPressedCallback;
+import androidx.activity.OnBackPressedDispatcher;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import android.media.ThumbnailUtils;
+import androidx.appcompat.app.AlertDialog;
+import android.content.DialogInterface;
 
 import com.ucsm.uniseek.R;
 import com.ucsm.uniseek.ml.ModelColoresv2;
@@ -33,12 +39,16 @@ public class FirstUniseekActivity extends AppCompatActivity {
     TextView result, confidence;
     ImageView imageView;
     ImageButton picture, searchButton;
+    Button cerrarsesion;
     int imageSize = 224;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_first_uniseek);
+
+        OnBackPressedDispatcher onBackPressedDispatcher = getOnBackPressedDispatcher();
+
         /*
         result = findViewById(R.id.result);
         confidence = findViewById(R.id.confidence);
@@ -46,6 +56,7 @@ public class FirstUniseekActivity extends AppCompatActivity {
         */
         picture = findViewById(R.id.button);
         searchButton = findViewById(R.id.searchButton);
+        cerrarsesion = findViewById(R.id.cerrar);
 
         // Add OnClickListener for searchButton
         searchButton.setOnClickListener(new View.OnClickListener() {
@@ -54,6 +65,11 @@ public class FirstUniseekActivity extends AppCompatActivity {
                 Intent searchIntent = new Intent(FirstUniseekActivity.this, SearchObjectActivity.class);
                 startActivity(searchIntent);
             }
+        });
+
+        cerrarsesion.setOnClickListener(v -> {
+            Intent intent = new Intent(FirstUniseekActivity.this, LoginauthActivity.class);
+            startActivity(intent);
         });
 
         picture.setOnClickListener(new View.OnClickListener() {
@@ -67,6 +83,24 @@ public class FirstUniseekActivity extends AppCompatActivity {
                     //Request camera permission if we don't have it.
                     requestPermissions(new String[]{Manifest.permission.CAMERA}, 100);
                 }
+            }
+        });
+
+        //Permite que el usuario no regrese al Login
+        onBackPressedDispatcher.addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                // Muestra el AlertDialog
+                new AlertDialog.Builder(FirstUniseekActivity.this)
+                        .setMessage("¿Deseas cerrar sesión y salir de la aplicación?")
+                        .setPositiveButton("Sí", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // Finaliza la actividad actual
+                                finish();
+                            }
+                        })
+                        .setNegativeButton("No", null)
+                        .show();
             }
         });
 

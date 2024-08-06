@@ -6,6 +6,19 @@
     android:layout_height="match_parent"
     tools:context=".appuniseek.FirstUniseekActivity">
 
+    <Button
+        android:id="@+id/cerrar"
+        android:layout_width="150dp"
+        android:layout_height="55dp"
+        android:layout_marginTop="10dp"
+        android:layout_alignParentLeft="true"
+        android:layout_margin="16dp"
+        android:backgroundTint="#FF0000"
+        android:padding="15dp"
+        android:text="Cerrar sesión"
+        android:textColor="@android:color/white"
+        android:textSize="12sp" />
+
     <ImageButton
         android:id="@+id/button"
         android:layout_width="150dp"

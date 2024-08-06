@@ -19,10 +19,16 @@
         android:theme="@style/Theme.Uniseek"
         tools:targetApi="31">
         <activity
+            android:name=".appuniseek.RegisterAuthActivity"
+            android:exported="false" />
+        <activity
             android:name=".appuniseek.SearchObjectActivity"
             android:exported="false" />
         <activity
             android:name=".appuniseek.LostPasswordActivity"
+            android:exported="false" />
+        <activity
+            android:name=".appuniseek.FullscreenImageActivity"
             android:exported="false" />
         <activity
             android:name=".appuniseek.LoginauthActivity"
@@ -39,6 +45,7 @@
         <activity
             android:name=".appuniseek.PrincipalUniseekActivity"
             android:exported="false" />
+
     </application>
 
 </manifest>
