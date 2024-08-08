@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -40,6 +41,7 @@ public class FirstUniseekActivity extends AppCompatActivity {
     ImageView imageView;
     ImageButton picture, searchButton;
     Button cerrarsesion;
+    private static String emailuser;
     int imageSize = 224;
 
     @Override
@@ -172,10 +174,11 @@ public class FirstUniseekActivity extends AppCompatActivity {
             intent2.putExtra("objeto", classes[maxPos]);
             intent2.putExtra("color", classes2[maxPos2]);
             Intent intent = getIntent();
-            if (intent != null) {
-                String email = intent.getStringExtra("email");
-                intent2.putExtra("email",email);
+            if (intent.getStringExtra("email") != null) {
+                emailuser = intent.getStringExtra("email");
+                intent2.putExtra("email",emailuser);
             }
+            intent2.putExtra("email",emailuser);
 
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             image.compress(Bitmap.CompressFormat.PNG, 100, stream);
