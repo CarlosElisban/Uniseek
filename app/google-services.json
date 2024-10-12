@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "1075405614839",
-    "project_id": "uniseek-c3a19",
-    "storage_bucket": "uniseek-c3a19.appspot.com"
+    "project_number": "4735406554",
+    "project_id": "uniseek2-6dbac",
+    "storage_bucket": "uniseek2-6dbac.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1075405614839:android:9d00a012ade9731c5f2df2",
+        "mobilesdk_app_id": "1:4735406554:android:46c9b4eff10fcd79eff0e3",
         "android_client_info": {
           "package_name": "com.ucsm.uniseek"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyApjxLr9JkQga6w5N22s75PRNTwopDC49w"
+          "current_key": "AIzaSyCj_HE7UceC_3MOwV55-5Vjaz5OjDGx34M"
         }
       ],
       "services": {
