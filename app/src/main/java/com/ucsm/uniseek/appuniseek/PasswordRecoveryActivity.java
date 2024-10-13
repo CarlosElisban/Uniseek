@@ -19,8 +19,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.ucsm.uniseek.R;
 
-public class LostPasswordActivity extends AppCompatActivity {
-    private static final String TAG = "LostPasswordActivity";
+public class PasswordRecoveryActivity extends AppCompatActivity {
+    private static final String TAG = "PasswordRecoveryActivity";
     EditText emailLost;
     Button resetPassword, volver;
 
@@ -52,20 +52,20 @@ public class LostPasswordActivity extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 if (task.isSuccessful()) {
-                                    Toast.makeText(LostPasswordActivity.this, "Password reset email sent.", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(PasswordRecoveryActivity.this, "Password reset email sent.", Toast.LENGTH_SHORT).show();
                                 } else {
                                     Log.e(TAG, "sendPasswordResetEmail", task.getException());
-                                    Toast.makeText(LostPasswordActivity.this, "Failed to send password reset email.", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(PasswordRecoveryActivity.this, "Failed to send password reset email.", Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });
             } else {
-                Toast.makeText(LostPasswordActivity.this, "Please enter your email address.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(PasswordRecoveryActivity.this, "Please enter your email address.", Toast.LENGTH_SHORT).show();
             }
         });
 
         volver.setOnClickListener(v -> {
-            Intent intent = new Intent(LostPasswordActivity.this, LoginauthActivity.class);
+            Intent intent = new Intent(PasswordRecoveryActivity.this, LoginActivity.class);
             startActivity(intent);
             finish();
         });

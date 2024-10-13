@@ -19,19 +19,19 @@
         android:theme="@style/Theme.Uniseek"
         tools:targetApi="31">
         <activity
-            android:name=".appuniseek.RegisterAuthActivity"
+            android:name=".appuniseek.RegistrationActivity"
             android:exported="false" />
         <activity
             android:name=".appuniseek.SearchObjectActivity"
             android:exported="false" />
         <activity
-            android:name=".appuniseek.LostPasswordActivity"
+            android:name=".appuniseek.PasswordRecoveryActivity"
             android:exported="false" />
         <activity
             android:name=".appuniseek.FullscreenImageActivity"
             android:exported="false" />
         <activity
-            android:name=".appuniseek.LoginauthActivity"
+            android:name=".appuniseek.LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -40,10 +40,10 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".appuniseek.FirstUniseekActivity"
+            android:name=".appuniseek.CameraAccessActivity"
             android:exported="true" />
         <activity
-            android:name=".appuniseek.PrincipalUniseekActivity"
+            android:name=".appuniseek.ReportCreationActivity"
             android:exported="false" />
 
     </application>

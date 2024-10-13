@@ -7,7 +7,6 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -20,7 +19,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import android.media.ThumbnailUtils;
 import androidx.appcompat.app.AlertDialog;
-import android.content.DialogInterface;
 
 import com.ucsm.uniseek.R;
 import com.ucsm.uniseek.ml.ModelColoresv2;
@@ -35,7 +33,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
-public class FirstUniseekActivity extends AppCompatActivity {
+public class CameraAccessActivity extends AppCompatActivity {
 
     TextView result, confidence;
     ImageView imageView;
@@ -64,13 +62,13 @@ public class FirstUniseekActivity extends AppCompatActivity {
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent searchIntent = new Intent(FirstUniseekActivity.this, SearchObjectActivity.class);
+                Intent searchIntent = new Intent(CameraAccessActivity.this, SearchObjectActivity.class);
                 startActivity(searchIntent);
             }
         });
 
         cerrarsesion.setOnClickListener(v -> {
-            Intent intent = new Intent(FirstUniseekActivity.this, LoginauthActivity.class);
+            Intent intent = new Intent(CameraAccessActivity.this, LoginActivity.class);
             startActivity(intent);
         });
 
@@ -93,7 +91,7 @@ public class FirstUniseekActivity extends AppCompatActivity {
             @Override
             public void handleOnBackPressed() {
                 // Muestra el AlertDialog
-                new AlertDialog.Builder(FirstUniseekActivity.this)
+                new AlertDialog.Builder(CameraAccessActivity.this)
                         .setMessage("¿Deseas cerrar sesión y salir de la aplicación?")
                         .setPositiveButton("Sí", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
@@ -170,7 +168,7 @@ public class FirstUniseekActivity extends AppCompatActivity {
             //result.setText(classes[maxPos]+" color "+classes2[maxPos2]);
 
 
-            Intent intent2 = new Intent(FirstUniseekActivity.this, PrincipalUniseekActivity.class);
+            Intent intent2 = new Intent(CameraAccessActivity.this, ReportCreationActivity.class);
             intent2.putExtra("objeto", classes[maxPos]);
             intent2.putExtra("color", classes2[maxPos2]);
             Intent intent = getIntent();

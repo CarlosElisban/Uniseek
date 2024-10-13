@@ -5,20 +5,16 @@ import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Switch;
-import android.widget.TimePicker;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -40,7 +36,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class PrincipalUniseekActivity extends AppCompatActivity implements View.OnClickListener {
+public class ReportCreationActivity extends AppCompatActivity implements View.OnClickListener {
     Button bfecha, bhora, aceptarButton;
     ImageButton refreshButton;
     EditText efecha, ehora, colorEditText, objetoEditText, adicionalEditText, nombreEditText;
@@ -67,7 +63,7 @@ public class PrincipalUniseekActivity extends AppCompatActivity implements View.
         // Obtener referencia de los elementos de la UI
         Button button = findViewById(R.id.button2);
         button.setOnClickListener(view -> {
-            Intent intent = new Intent(PrincipalUniseekActivity.this, FirstUniseekActivity.class);
+            Intent intent = new Intent(ReportCreationActivity.this, CameraAccessActivity.class);
             startActivity(intent);
         });
 
@@ -179,7 +175,7 @@ public class PrincipalUniseekActivity extends AppCompatActivity implements View.
             timePickerDialog.show();
         } else if (v == aceptarButton) {
             guardarDatosEnFirestore();
-            Intent intent = new Intent(PrincipalUniseekActivity.this, FirstUniseekActivity.class);
+            Intent intent = new Intent(ReportCreationActivity.this, CameraAccessActivity.class);
             startActivity(intent);
         }
     }
